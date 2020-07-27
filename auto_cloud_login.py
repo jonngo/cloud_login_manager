@@ -492,14 +492,16 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
 
         #Open Chrome browser
         #Remove the 'Chrome run by automation'
-        #chrome_options = webdriver.ChromeOptions()
-        #chrome_options.add_argument("--disable-infobars")
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--disable-infobars")
         #Argument has explanation below
         #args = ["hide_console",]
         #self.driver = webdriver.Chrome(service_args=args, options=chrome_options)
-        #self.driver = webdriver.Chrome('C://Users//jonathann//Downloads//chromedriver_win32')
+        self.driver = webdriver.Chrome('C:/Users/jonathann/invenco/my_hack_project/cloud_login_manager/chromedriver_win32/chromedriver.exe',options=chrome_options)
 
-        self.driver = webdriver.Firefox(executable_path='geckodriver-v0.24.0-win64/geckodriver.exe')
+        #Open Firefox browser
+        # self.driver = webdriver.Firefox(executable_path='geckodriver-v0.24.0-win64/geckodriver.exe')
+
         self.driver.get(cloud_host)
         time.sleep(2)
 
