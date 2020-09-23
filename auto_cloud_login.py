@@ -481,50 +481,55 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
             totp = pyotp.TOTP(self.secret_key)
             email_field = self.driver.find_element_by_id("passConfirmDialog")
             email_field.send_keys(totp.now())
-        except:
+        except Exception as e:
+            print(str(e))
             self.statusbar.showMessage("Cannot find the MFA dialog box", 1500)
 
     def open_invenco_cloud(self, index):
-        username = self.credentials[index]['username']
-        passwd = self.credentials[index]['passwd']
-        cloud_host = self.credentials[index]['cloud_host']
-        self.secret_key = self.credentials[index]['secret_key']
+        try:
+            username = self.credentials[index]['username']
+            passwd = self.credentials[index]['passwd']
+            cloud_host = self.credentials[index]['cloud_host']
+            self.secret_key = self.credentials[index]['secret_key']
 
-        #Open Chrome browser
-        #Remove the 'Chrome run by automation'
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument("--disable-infobars")
-        #Argument has explanation below
-        #args = ["hide_console",]
-        #self.driver = webdriver.Chrome(service_args=args, options=chrome_options)
-        self.driver = webdriver.Chrome('C:/Users/jonathann/invenco/my_hack_project/cloud_login_manager/chromedriver_win32/chromedriver.exe',options=chrome_options)
+            #Open Chrome browser
+            #Remove the 'Chrome run by automation'
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.add_argument("--disable-infobars")
+            #Argument has explanation below
+            #args = ["hide_console",]
+            #self.driver = webdriver.Chrome(service_args=args, options=chrome_options)
+            self.driver = webdriver.Chrome('C:/Users/jonathann/invenco/my_hack_project/cloud_login_manager/chromedriver_win32/chromedriver.exe',options=chrome_options)
 
-        #Open Firefox browser
-        # self.driver = webdriver.Firefox(executable_path='geckodriver-v0.24.0-win64/geckodriver.exe')
+            #Open Firefox browser
+            # self.driver = webdriver.Firefox(executable_path='geckodriver-v0.24.0-win64/geckodriver.exe')
 
-        self.driver.get(cloud_host)
-        time.sleep(2)
+            self.driver.get(cloud_host)
+            time.sleep(2)
 
-        #Enter email and password
-        email_field = self.driver.find_element_by_id("email")
-        email_field.send_keys(username)
+            #Enter email and password
+            email_field = self.driver.find_element_by_id("email")
+            email_field.send_keys(username)
 
-        passwd_field = self.driver.find_element_by_id("passwd")
-        passwd_field.send_keys(passwd)
+            passwd_field = self.driver.find_element_by_id("passwd")
+            passwd_field.send_keys(passwd)
 
-        login_button = self.driver.find_element_by_xpath("/html/body/div/div[2]/div[1]/main/form/div/button")
-        login_button.click()
+            login_button = self.driver.find_element_by_xpath("/html/body/div/div[2]/div[1]/main/form/div/button")
+            login_button.click()
 
-        #Get the authentication code
-        totp = pyotp.TOTP(self.secret_key)
+            #Get the authentication code
+            totp = pyotp.TOTP(self.secret_key)
 
-        #Enter auth code to browser
-        time.sleep(2)
-        mfa_field = self.driver.find_element_by_id("mfa")
-        mfa_field.send_keys(totp.now())
+            #Enter auth code to browser
+            time.sleep(2)
+            mfa_field = self.driver.find_element_by_id("mfa")
+            mfa_field.send_keys(totp.now())
 
-        verify_button = self.driver.find_element_by_xpath("/html/body/div/div[2]/div[1]/main/div/div/div/div/div/div[1]/div[2]/form/button")
-        verify_button.click()
+            verify_button = self.driver.find_element_by_xpath("/html/body/div/div[2]/div[1]/main/div/div/div/div/div/div[1]/div[2]/form/button")
+            verify_button.click()
+        except Exception as e:
+            print(str(e))
+
 
 if __name__ == "__main__":
     import sys
