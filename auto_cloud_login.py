@@ -39,6 +39,7 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
         self.close_push_button.clicked.connect(self.close_configuration)
         self.refresh_push_button.clicked.connect(self.refresh_configuration)
         self.mfa_pushbutton.clicked.connect(self.mfa_to_browser)
+        self.mfa_FR_PushButton.clicked.connect(self.mfa_fr_to_browser)
 
         #Hints
         self.close_push_button.setToolTip("Closes the configuration panel,\nand use existing configuration.")
@@ -62,6 +63,7 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
         self.secret_key_line_edit.setToolTip("Copy the key from WinAuth or other authenticator app you are using.\n(This will be encrypted)")
         self.passphrase_line_edit.setToolTip("Passphrase used to encrypt/decrypt sensitive information and must be at least 4 characters.")
         self.mfa_pushbutton.setToolTip("Paste the MFA code to the browser.\nUsing the last key.")
+        self.mfa_FR_PushButton.setToolTip("Paste the MFA code to the browser.\nUsing the last key.")
 
         reply, pp = self.get_startup_passphrase()
 
@@ -74,8 +76,8 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
                 self.show_cloud_buttons(False)
                 self.show_active_cloud_buttons()
                 self.mfa_pushbutton.show()
-                cloud_login_manager.adjustSize()
-                self.autologin.adjustSize()
+                self.mfa_FR_PushButton.show()
+                cloud_login_manager.resize(50, 50)
                 self.statusbar.showMessage("Configuration read successfully.", 2000)
 
             else:
@@ -85,6 +87,7 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
                 self.show_credential_UI(True)
                 self.show_cloud_buttons(True)
                 self.mfa_pushbutton.hide()
+                self.mfa_FR_PushButton.hide()
                 self.credentials = {}
                 self.statusbar.showMessage("Unable to read configuration or the passphrase is incorrect to decrypt stored password.", 3000)
 
@@ -121,9 +124,10 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
                 self.show_cloud_buttons(False)
                 self.show_active_cloud_buttons()
                 self.mfa_pushbutton.show()
+                self.mfa_FR_PushButton.show()
                 self.cloud_buttons_frame.adjustSize()
                 self.autologin.adjustSize()
-                cloud_login_manager.adjustSize()
+                cloud_login_manager.resize(50,50)
                 self.configuration_menu_item.setEnabled(True)
             else:
                 reply = self.dialogYN('No valid credentials.\nClose the app?','Exit')
@@ -295,6 +299,7 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
         self.show_cloud_buttons(True)
         self.show_credential_UI(True)
         self.mfa_pushbutton.hide()
+        self.mfa_FR_PushButton.hide()
 
     def show_option_on_passphrase_change(self):
         self.pp = self.passphrase_line_edit.text()
@@ -480,6 +485,16 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
             # Get the authentication code
             totp = pyotp.TOTP(self.secret_key)
             email_field = self.driver.find_element_by_id("passConfirmDialog")
+            email_field.send_keys(totp.now())
+        except Exception as e:
+            print(str(e))
+            self.statusbar.showMessage("Cannot find the MFA dialog box", 1500)
+
+    def mfa_fr_to_browser(self):
+        try:
+            # Get the authentication code
+            totp = pyotp.TOTP(self.secret_key)
+            email_field = self.driver.find_element_by_id("mfaField")
             email_field.send_keys(totp.now())
         except Exception as e:
             print(str(e))
