@@ -40,6 +40,7 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
         self.refresh_push_button.clicked.connect(self.refresh_configuration)
         self.mfa_pushbutton.clicked.connect(self.mfa_to_browser)
         self.mfa_FR_PushButton.clicked.connect(self.mfa_fr_to_browser)
+        self.mfa_PL_PushButton.clicked.connect(self.mfa_pl_to_browser)
 
         #Hints
         self.close_push_button.setToolTip("Closes the configuration panel,\nand use existing configuration.")
@@ -64,6 +65,7 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
         self.passphrase_line_edit.setToolTip("Passphrase used to encrypt/decrypt sensitive information and must be at least 4 characters.")
         self.mfa_pushbutton.setToolTip("Paste the MFA code to the browser.\nUsing the last key.")
         self.mfa_FR_PushButton.setToolTip("Paste the MFA code to the browser.\nUsing the last key.")
+        self.mfa_PL_PushButton.setToolTip("Paste the MFA code to the browser.\nUsing the last key.")
 
         reply, pp = self.get_startup_passphrase()
 
@@ -484,8 +486,8 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
         try:
             # Get the authentication code
             totp = pyotp.TOTP(self.secret_key)
-            email_field = self.driver.find_element_by_id("passConfirmDialog")
-            email_field.send_keys(totp.now())
+            mfa_field = self.driver.find_element_by_id("passConfirmDialog")
+            mfa_field.send_keys(totp.now())
         except Exception as e:
             print(str(e))
             self.statusbar.showMessage("Cannot find the MFA dialog box", 1500)
@@ -494,8 +496,18 @@ class ExtendAutoLogIn(Ui_cloud_login_manager):
         try:
             # Get the authentication code
             totp = pyotp.TOTP(self.secret_key)
-            email_field = self.driver.find_element_by_id("mfaField")
-            email_field.send_keys(totp.now())
+            mfa_field = self.driver.find_element_by_id("mfaField")
+            mfa_field.send_keys(totp.now())
+        except Exception as e:
+            print(str(e))
+            self.statusbar.showMessage("Cannot find the MFA dialog box", 1500)
+
+    def mfa_pl_to_browser(self):
+        try:
+            # Get the authentication code
+            totp = pyotp.TOTP(self.secret_key)
+            mfa_field = self.driver.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div/div[2]/div/input')
+            mfa_field.send_keys(totp.now())
         except Exception as e:
             print(str(e))
             self.statusbar.showMessage("Cannot find the MFA dialog box", 1500)
@@ -555,6 +567,7 @@ if __name__ == "__main__":
     ui.extendUI(cloud_login_manager)
     sys.exit(app.exec_())
 
+# pyuic5 cloud_login_manager.ui -o cloud_login_manager.py
 
 '''
 Python don't have the HideCommandPromptWindow like in C#, so someone in Stack Overflow contributed a workaround.
